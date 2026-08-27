@@ -1,0 +1,157 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #FEF9EF; /* Warm Neo-Brutalist Cream Canvas */
+    color: #18181B;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+  }
+}
+
+/* Neo-Brutalism Core Utilities */
+.neo-box {
+  background: #FFFFFF;
+  border: 3px solid #18181B;
+  box-shadow: 5px 5px 0px 0px #18181B;
+  border-radius: 18px;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.neo-box-sm {
+  background: #FFFFFF;
+  border: 2.5px solid #18181B;
+  box-shadow: 3px 3px 0px 0px #18181B;
+  border-radius: 14px;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.neo-box-lg {
+  background: #FFFFFF;
+  border: 3.5px solid #18181B;
+  box-shadow: 7px 7px 0px 0px #18181B;
+  border-radius: 24px;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Tactile Neo-Brutalist Buttons */
+.neo-btn {
+  border: 2.5px solid #18181B;
+  box-shadow: 4px 4px 0px 0px #18181B;
+  border-radius: 14px;
+  font-weight: 800;
+  transition: all 0.1s ease-in-out;
+  cursor: pointer;
+}
+
+.neo-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px #18181B;
+}
+
+.neo-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px 0px #18181B;
+}
+
+/* Interactive Color Variants */
+.neo-btn-yellow {
+  background-color: #FFE600;
+  color: #18181B;
+}
+.neo-btn-yellow:hover {
+  background-color: #FFEA2E;
+}
+
+.neo-btn-pink {
+  background-color: #FF5E8E;
+  color: #FFFFFF;
+}
+.neo-btn-pink:hover {
+  background-color: #FF477E;
+}
+
+.neo-btn-green {
+  background-color: #4EED89;
+  color: #18181B;
+}
+.neo-btn-green:hover {
+  background-color: #38E478;
+}
+
+.neo-btn-cyan {
+  background-color: #38BDF8;
+  color: #18181B;
+}
+.neo-btn-cyan:hover {
+  background-color: #0EA5E9;
+  color: #FFFFFF;
+}
+
+.neo-btn-purple {
+  background-color: #A855F7;
+  color: #FFFFFF;
+}
+.neo-btn-purple:hover {
+  background-color: #9333EA;
+}
+
+/* Neo-Brutalist Sticker Badges */
+.neo-badge {
+  border: 2px solid #18181B;
+  box-shadow: 2px 2px 0px 0px #18181B;
+  border-radius: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+}
+
+/* 3D Flip Card Effect with Neo-Brutalism */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* Custom Neo Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F1EAD9;
+  border-left: 2px solid #18181B;
+}
+::-webkit-scrollbar-thumb {
+  background: #FFE600;
+  border: 2px solid #18181B;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #FF5E8E;
+}
+
+/* Background Subtle Dotted Grid */
+.bg-neo-dots {
+  background-image: radial-gradient(#18181B 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+}
