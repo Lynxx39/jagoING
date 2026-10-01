@@ -16,12 +16,13 @@ export default function GamesModule({ onEarnXP }) {
   const [scrambledPool, setScrambledPool] = useState([]);
   const [gameScore, setGameScore] = useState(0);
   const [isWordCorrect, setIsWordCorrect] = useState(null);
+  const [shuffleSeed, setShuffleSeed] = useState(0);
 
   const currentScramble = SCRAMBLE_WORDS[scrambleIndex] || SCRAMBLE_WORDS[0];
 
   useEffect(() => {
     initScrambleWord(currentScramble.word);
-  }, [scrambleIndex]);
+  }, [scrambleIndex, shuffleSeed]);
 
   const initScrambleWord = (word) => {
     const letters = word.split('');
@@ -64,7 +65,7 @@ export default function GamesModule({ onEarnXP }) {
 
   const handleResetCurrentWord = () => {
     sfx.playClick();
-    initScrambleWord(currentScramble.word);
+    setShuffleSeed(prev => prev + 1);
   };
 
   return (

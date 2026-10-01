@@ -33,6 +33,20 @@ export default {
         sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
         mono: ['Fira Code', 'monospace']
       },
+      // ponytail: Neo-Brutalism uses 2.5/3/3.5px borders; add w-13/h-13 for letter tiles.
+      borderWidth: {
+        DEFAULT: '1px',
+        '0': '0px',
+        '2': '2px',
+        '2.5': '2.5px',
+        '3': '3px',
+        '3.5': '3.5px',
+        '4': '4px',
+        '8': '8px'
+      },
+      spacing: {
+        '13': '3.25rem'
+      },
       keyframes: {
         float: {
           '0%, 100%': { transform: 'translateY(0px)' },

@@ -155,3 +155,23 @@
   background-image: radial-gradient(#18181B 1.5px, transparent 1.5px);
   background-size: 24px 24px;
 }
+
+/* Hide scrollbars on horizontal nav ribbons */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Clean printed output for Cheat Sheets */
+@media print {
+  header,
+  footer {
+    display: none !important;
+  }
+  body {
+    background: #FFFFFF;
+  }
+}

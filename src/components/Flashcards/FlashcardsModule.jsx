@@ -37,7 +37,9 @@ export default function FlashcardsModule({ userData, setUserData, onEarnXP, onCo
     if (!currentCard) return;
     sfx.playClick();
 
-    const updatedCard = calculateSM2(quality, currentCard);
+    // Feed the stored SM-2 state (not the static deck entry) back into the algorithm.
+    const srsState = userData.srsCards?.[currentCard.id] || { repetitions: 0, interval: 1, easeFactor: 2.5 };
+    const updatedCard = calculateSM2(quality, srsState);
     
     setUserData(prev => ({
       ...prev,
@@ -133,7 +135,7 @@ export default function FlashcardsModule({ userData, setUserData, onEarnXP, onCo
                 KARTU {currentIndex + 1} DARI {cards.length}
               </span>
               <span className="neo-badge bg-[#38BDF8] text-[#18181B] px-2.5 py-1">
-                SM-2 Ease: {currentCard.easeFactor || 2.5}x
+                SM-2 Ease: {userData.srsCards?.[currentCard.id]?.easeFactor || 2.5}x
               </span>
             </div>
 

@@ -67,14 +67,25 @@ export default function App() {
 
   const handleCompleteQuest = (questId) => {
     setUserData(prev => {
-      const quests = (prev.dailyQuests || []).map(q => {
-        if (q.id === questId && !q.completed) {
-          handleEarnXP(q.xp);
-          return { ...q, current: q.target, completed: true };
-        }
-        return q;
-      });
-      return { ...prev, dailyQuests: quests };
+      const quest = (prev.dailyQuests || []).find(q => q.id === questId && !q.completed);
+      if (!quest) return prev;
+
+      const prevRank = calculateRank(prev.xp).currentRank;
+      const nextXP = prev.xp + quest.xp;
+      const newRank = calculateRank(nextXP).currentRank;
+
+      if (newRank.level > prevRank.level) {
+        setEarnedRank(newRank);
+        setShowLevelUpModal(true);
+      }
+
+      return {
+        ...prev,
+        xp: nextXP,
+        dailyQuests: prev.dailyQuests.map(q =>
+          q.id === questId ? { ...q, current: q.target, completed: true } : q
+        )
+      };
     });
   };
 
