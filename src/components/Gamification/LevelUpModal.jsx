@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import confetti from 'canvas-confetti';
-import { Sparkles, X, Trophy } from 'lucide-react';
+import { X } from 'lucide-react';
 import { sfx } from '../../services/soundEffects';
 
 export default function LevelUpModal({ rank, onClose }) {

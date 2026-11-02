@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, CheckCircle, XCircle, Sparkles, RotateCcw, Award } from 'lucide-react';
+import { RotateCcw } from 'lucide-react';
 import { GRAMMAR_DATA } from '../../data/grammarData';
 import { sfx } from '../../services/soundEffects';
 

@@ -2,19 +2,16 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { 
   Flame, 
-  Sparkles, 
   Award, 
   BookOpen, 
   Headphones, 
   Layers, 
   FileCheck, 
   MessageSquare, 
-  Mic,
+  Mic, 
   CheckCircle2, 
-  ArrowRight,
-  Trophy,
-  Zap,
-  Star
+  ArrowRight, 
+  Trophy 
 } from 'lucide-react';
 import { calculateRank } from '../../services/storageService';
 import { sfx } from '../../services/soundEffects';
@@ -42,13 +39,15 @@ const itemVariants = {
 export default function DashboardModule({ 
   userData, 
   setActiveTab, 
-  onEarnXP 
+  _onEarnXP 
 }) {
   const { currentRank, nextRank, progressPercent, xpToNext } = calculateRank(userData.xp);
 
   const srsCount = Object.keys(userData.srsCards || {}).length;
   const examCount = (userData.examHistory || []).length;
-  const completedQuestsCount = userData.dailyQuests.filter(q => q.completed).length;
+  const quests = userData.dailyQuests || [];
+  const achievements = userData.achievements || [];
+  const completedQuestsCount = quests.filter(q => q.completed).length;
 
   return (
     <motion.div 
@@ -101,6 +100,9 @@ export default function DashboardModule({
               <span className="px-3.5 py-1 rounded-xl bg-[#FF5E8E] text-white font-black text-xs border-2.5 border-[#18181B] shadow-[2px_2px_0px_0px_#18181B] flex items-center space-x-1">
                 <Flame className="w-4 h-4 fill-current animate-bounce" />
                 <span>{userData.streak} HARI STREAK</span>
+              </span>
+              <span className="px-3.5 py-1 rounded-xl bg-[#38BDF8] text-[#18181B] font-black text-xs border-2.5 border-[#18181B] shadow-[2px_2px_0px_0px_#18181B] flex items-center space-x-1">
+                <span>⏱️ {Math.max(1, Math.round((userData.studyTimeSeconds || 0) / 60))} MENIT BELAJAR</span>
               </span>
             </div>
 
@@ -215,7 +217,7 @@ export default function DashboardModule({
             </div>
 
             <div className="space-y-3">
-              {userData.dailyQuests.map(q => (
+              {quests.map(q => (
                 <motion.div 
                   key={q.id}
                   whileHover={{ scale: 1.01 }}
@@ -310,7 +312,7 @@ export default function DashboardModule({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              {userData.achievements.map((ach) => (
+              {achievements.map((ach) => (
                 <motion.div 
                   key={ach.id}
                   whileHover={{ scale: 1.02 }}

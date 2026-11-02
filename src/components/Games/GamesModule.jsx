@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Gamepad2, RotateCcw, Zap } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { RotateCcw, Zap } from 'lucide-react';
 import { sfx } from '../../services/soundEffects';
 
 const SCRAMBLE_WORDS = [
@@ -20,17 +20,17 @@ export default function GamesModule({ onEarnXP }) {
 
   const currentScramble = SCRAMBLE_WORDS[scrambleIndex] || SCRAMBLE_WORDS[0];
 
-  useEffect(() => {
-    initScrambleWord(currentScramble.word);
-  }, [scrambleIndex, shuffleSeed]);
-
-  const initScrambleWord = (word) => {
+  const initScrambleWord = useCallback((word) => {
     const letters = word.split('');
     const shuffled = [...letters].sort(() => Math.random() - 0.5);
     setScrambledPool(shuffled);
     setUserLetters([]);
     setIsWordCorrect(null);
-  };
+  }, []);
+
+  useEffect(() => {
+    initScrambleWord(currentScramble.word);
+  }, [currentScramble.word, shuffleSeed, initScrambleWord]);
 
   const handlePickLetter = (letter, pIdx) => {
     sfx.playClick();
@@ -61,6 +61,14 @@ export default function GamesModule({ onEarnXP }) {
         sfx.playIncorrect();
       }
     }
+  };
+
+  const handleUnpickLetter = (lIdx) => {
+    sfx.playClick();
+    const letter = userLetters[lIdx];
+    setUserLetters(prev => prev.filter((_, i) => i !== lIdx));
+    setScrambledPool(prev => [...prev, letter]);
+    setIsWordCorrect(null);
   };
 
   const handleResetCurrentWord = () => {
@@ -119,15 +127,17 @@ export default function GamesModule({ onEarnXP }) {
           {/* Spelled Slots */}
           <div className="flex items-center justify-center flex-wrap gap-2.5 min-h-[64px] p-4 rounded-2xl bg-[#F8FAFC] border-2.5 border-[#18181B] shadow-inner">
             {userLetters.map((l, lIdx) => (
-              <span
+              <button
                 key={lIdx}
-                className="w-12 h-12 rounded-2xl bg-[#FFE600] text-[#18181B] font-black text-2xl flex items-center justify-center border-2.5 border-[#18181B] shadow-[3px_3px_0px_0px_#18181B] animate-float"
+                onClick={() => handleUnpickLetter(lIdx)}
+                title="Klik untuk kembalikan huruf ini"
+                className="w-12 h-12 rounded-2xl bg-[#FFE600] text-[#18181B] font-black text-2xl flex items-center justify-center border-2.5 border-[#18181B] shadow-[3px_3px_0px_0px_#18181B] hover:bg-[#F87171] hover:text-white transition-all cursor-pointer animate-float"
               >
                 {l}
-              </span>
+              </button>
             ))}
             {userLetters.length === 0 && (
-              <span className="text-xs font-bold text-[#A1A1AA] italic">Pilih huruf di bawah untuk menyusun kata</span>
+              <span className="text-xs font-bold text-[#A1A1AA] italic">Pilih huruf di bawah untuk menyusun kata (klik huruf di sini untuk batal)</span>
             )}
           </div>
 

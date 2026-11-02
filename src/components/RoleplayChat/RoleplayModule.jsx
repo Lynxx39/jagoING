@@ -1,11 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
-  MessageSquare, 
   Send, 
   Mic, 
   MicOff, 
   Volume2, 
-  Sparkles, 
   AlertCircle,
   Lightbulb,
   RotateCcw
@@ -15,7 +13,7 @@ import { generateRoleplayReply } from '../../services/aiTutorEngine';
 import { speechService } from '../../services/speechService';
 import { sfx } from '../../services/soundEffects';
 
-export default function RoleplayModule({ userData, onEarnXP, onCompleteQuest }) {
+export default function RoleplayModule({ _userData, onEarnXP, onCompleteQuest, onUnlockAchievement }) {
   const [selectedScenarioId, setSelectedScenarioId] = useState(ROLEPLAY_SCENARIOS[0].id);
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
@@ -23,6 +21,13 @@ export default function RoleplayModule({ userData, onEarnXP, onCompleteQuest }) 
   const messagesEndRef = useRef(null);
 
   const scenario = ROLEPLAY_SCENARIOS.find(s => s.id === selectedScenarioId) || ROLEPLAY_SCENARIOS[0];
+
+  useEffect(() => {
+    return () => {
+      speechService.stop();
+      speechService.stopListening();
+    };
+  }, []);
 
   useEffect(() => {
     setMessages([
@@ -33,7 +38,7 @@ export default function RoleplayModule({ userData, onEarnXP, onCompleteQuest }) 
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }
     ]);
-  }, [selectedScenarioId]);
+  }, [selectedScenarioId, scenario.initialMessage]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -72,6 +77,7 @@ export default function RoleplayModule({ userData, onEarnXP, onCompleteQuest }) 
       sfx.playCorrect();
       onEarnXP(response.xpEarned || 15);
       onCompleteQuest('q_listening');
+      onUnlockAchievement?.('roleplay_star');
 
       speechService.speak(response.botReply, { lang: 'en-US' });
     }, 600);

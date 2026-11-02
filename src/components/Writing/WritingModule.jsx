@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  PenTool, 
   CheckCircle, 
-  Sparkles, 
   Copy, 
   RotateCcw, 
   Zap

@@ -1,21 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
-  Headphones, 
   Play, 
   Pause, 
   Volume2, 
-  CheckCircle, 
-  XCircle, 
   Eye, 
   EyeOff, 
-  Sparkles,
   Send
 } from 'lucide-react';
 import { LISTENING_DATA } from '../../data/listeningData';
 import { speechService } from '../../services/speechService';
 import { sfx } from '../../services/soundEffects';
 
-export default function ListeningModule({ userData, onEarnXP, onCompleteQuest }) {
+export default function ListeningModule({ userData, onEarnXP, onCompleteQuest, onUnlockAchievement }) {
   const [selectedId, setSelectedId] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1.0);
@@ -25,6 +21,12 @@ export default function ListeningModule({ userData, onEarnXP, onCompleteQuest })
   const [dictationScore, setDictationScore] = useState(0);
   const [quizAnswers, setQuizAnswers] = useState({});
   const [quizFeedback, setQuizFeedback] = useState({});
+
+  useEffect(() => {
+    return () => {
+      speechService.stop();
+    };
+  }, []);
 
   const filteredItems = LISTENING_DATA.filter(item => item.level === userData.selectedLevel);
   const currentItem = LISTENING_DATA.find(item => item.id === selectedId) || filteredItems[0];
@@ -69,6 +71,7 @@ export default function ListeningModule({ userData, onEarnXP, onCompleteQuest })
       setDictationScore(100);
       onEarnXP(35);
       onCompleteQuest('q_listening');
+      onUnlockAchievement?.('listening_pro');
     } else {
       const targetWords = target.split(' ');
       const userWords = user.split(' ');
@@ -79,6 +82,9 @@ export default function ListeningModule({ userData, onEarnXP, onCompleteQuest })
         sfx.playCorrect();
         onEarnXP(20);
         onCompleteQuest('q_listening');
+        if (sim === 100) {
+          onUnlockAchievement?.('listening_pro');
+        }
       } else {
         sfx.playIncorrect();
       }

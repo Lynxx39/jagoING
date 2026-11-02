@@ -38,9 +38,30 @@ export function getStoredUserData() {
     if (!raw) return getDefaultUserData();
 
     const data = JSON.parse(raw);
+    const defaults = getDefaultUserData();
+    const merged = {
+      ...defaults,
+      ...data,
+      achievements: Array.isArray(data.achievements) && data.achievements.length > 0 
+        ? defaults.achievements.map(def => {
+            const existing = data.achievements.find(a => a.id === def.id);
+            return existing ? { ...def, ...existing } : def;
+          })
+        : defaults.achievements,
+      dailyQuests: Array.isArray(data.dailyQuests) && data.dailyQuests.length > 0
+        ? defaults.dailyQuests.map(def => {
+            const existing = data.dailyQuests.find(q => q.id === def.id);
+            return existing ? { ...def, ...existing } : def;
+          })
+        : defaults.dailyQuests
+    };
+
     // Update streak check
-    checkAndUpdateStreak(data);
-    return data;
+    const streakChanged = checkAndUpdateStreak(merged);
+    if (streakChanged) {
+      saveUserData(merged);
+    }
+    return merged;
   } catch (e) {
     console.error('Error loading stored user data:', e);
     return getDefaultUserData();
@@ -80,7 +101,7 @@ function checkAndUpdateStreak(data) {
   const today = new Date().toISOString().split('T')[0];
   const lastActive = data.lastActiveDate;
 
-  if (lastActive === today) return;
+  if (lastActive === today) return false;
 
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
@@ -102,6 +123,7 @@ function checkAndUpdateStreak(data) {
 
   // Reset daily quests if it's a new day
   data.dailyQuests = INITIAL_DAILY_QUESTS.map(q => ({ ...q, current: 0, completed: false }));
+  return true;
 }
 
 export function calculateRank(xp) {

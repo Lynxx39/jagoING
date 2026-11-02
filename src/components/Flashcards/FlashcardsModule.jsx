@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import { 
   Layers, 
   RotateCw, 
-  Volume2, 
-  Sparkles, 
-  BrainCircuit
+  Volume2
 } from 'lucide-react';
 import { FLASHCARD_DECKS } from '../../data/flashcardsData';
 import { calculateSM2 } from '../../services/srsEngine';

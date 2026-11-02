@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Quote, Volume2 } from 'lucide-react';
+import { Volume2 } from 'lucide-react';
 import { IDIOMS_DATA } from '../../data/idiomsData';
 import { speechService } from '../../services/speechService';
 import { sfx } from '../../services/soundEffects';
 
-export default function IdiomsModule() {
+export default function IdiomsModule({ onEarnXP }) {
   const [filterType, setFilterType] = useState('All');
 
   const filteredIdioms = filterType === 'All' 
@@ -14,6 +14,7 @@ export default function IdiomsModule() {
   const handleSpeak = (text) => {
     sfx.playClick();
     speechService.speak(text, { lang: 'en-US' });
+    onEarnXP?.(10);
   };
 
   return (

@@ -110,7 +110,10 @@ export function analyzeGrammar(text) {
           index: m.index
         });
       });
-      correctedText = correctedText.replace(mistake.pattern, mistake.replacement);
+      const cleanReplacement = mistake.replacement.includes(' / ') 
+        ? mistake.replacement.split(' / ')[0] 
+        : mistake.replacement;
+      correctedText = correctedText.replace(mistake.pattern, cleanReplacement);
     }
   });
 
@@ -187,7 +190,7 @@ export async function callGeminiAI(apiKey, prompt, systemInstruction = "") {
 }
 
 // Interactive Roleplay Response Engine
-export function generateRoleplayReply(scenarioId, userMessage, history = []) {
+export function generateRoleplayReply(scenarioId, userMessage, _history = []) {
   const cleanMsg = userMessage.toLowerCase().trim();
   const grammarCheck = analyzeGrammar(userMessage);
 
@@ -234,7 +237,7 @@ export function generateRoleplayReply(scenarioId, userMessage, history = []) {
   } else {
     if (cleanMsg.includes('hello') || cleanMsg.includes('hi')) {
       botReply = "Hello there! It is great to practice English with you today. What topic would you like to explore together?";
-      suggestion = "You can say: 'Let\\'s talk about daily hobbies and school activities!'";
+      suggestion = "You can say: \"Let's talk about daily hobbies and school activities!\"";
     } else if (cleanMsg.includes('hobby') || cleanMsg.includes('game') || cleanMsg.includes('music') || cleanMsg.includes('read') || cleanMsg.includes('sport')) {
       botReply = "That sounds fascinating! How long have you been interested in that, and what do you enjoy most about it?";
       suggestion = "You can say: 'I have been doing it for two years because it helps me relax.'";

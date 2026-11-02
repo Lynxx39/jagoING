@@ -1,20 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
-  FileCheck, 
   Clock, 
   Flag, 
   ChevronLeft, 
   ChevronRight, 
-  CheckCircle, 
-  XCircle, 
-  Award, 
-  RotateCcw,
-  Sparkles
+  RotateCcw
 } from 'lucide-react';
 import { MOCK_EXAMS } from '../../data/mockExamsData';
 import { sfx } from '../../services/soundEffects';
 
-export default function MockExamModule({ userData, setUserData, onEarnXP, onCompleteQuest }) {
+export default function MockExamModule({ userData, setUserData, onEarnXP, onCompleteQuest, onUnlockAchievement }) {
   const [selectedExamId, setSelectedExamId] = useState(null);
   const [examStarted, setExamStarted] = useState(false);
   const [currentQIndex, setCurrentQIndex] = useState(0);
@@ -27,44 +22,7 @@ export default function MockExamModule({ userData, setUserData, onEarnXP, onComp
   const filteredExams = MOCK_EXAMS.filter(e => e.level === userData.selectedLevel);
   const currentExam = MOCK_EXAMS.find(e => e.id === selectedExamId) || filteredExams[0];
 
-  useEffect(() => {
-    let timer;
-    if (examStarted && !examFinished && timeLeftSeconds > 0) {
-      timer = setInterval(() => {
-        setTimeLeftSeconds(prev => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            handleSubmitExam();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
-    return () => clearInterval(timer);
-  }, [examStarted, examFinished, timeLeftSeconds]);
-
-  const handleStartExam = (exam) => {
-    sfx.playClick();
-    setSelectedExamId(exam.id);
-    setExamStarted(true);
-    setExamFinished(false);
-    setCurrentQIndex(0);
-    setUserAnswers({});
-    setFlaggedQuestions({});
-    setTimeLeftSeconds(exam.durationMinutes * 60);
-    setScoreResult(null);
-  };
-
-  const handleSelectOption = (optionIndex) => {
-    sfx.playClick();
-    setUserAnswers(prev => ({ ...prev, [currentQIndex]: optionIndex }));
-  };
-
-  const handleToggleFlag = (qIdx) => {
-    sfx.playClick();
-    setFlaggedQuestions(prev => ({ ...prev, [qIdx]: !prev[qIdx] }));
-  };
+  const handleSubmitExamRef = useRef(null);
 
   const handleSubmitExam = () => {
     if (!currentExam) return;
@@ -92,6 +50,9 @@ export default function MockExamModule({ userData, setUserData, onEarnXP, onComp
       sfx.playLevelUp();
       onEarnXP(80);
       onCompleteQuest('q_exam');
+      if (calculatedScore >= 80) {
+        onUnlockAchievement?.('exam_champion');
+      }
     } else {
       sfx.playIncorrect();
       onEarnXP(30);
@@ -109,6 +70,51 @@ export default function MockExamModule({ userData, setUserData, onEarnXP, onComp
         }
       ]
     }));
+  };
+
+  useEffect(() => {
+    handleSubmitExamRef.current = handleSubmitExam;
+  });
+
+  useEffect(() => {
+    if (!examStarted || examFinished) return;
+
+    const timer = setInterval(() => {
+      setTimeLeftSeconds(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setTimeout(() => {
+            handleSubmitExamRef.current?.();
+          }, 0);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [examStarted, examFinished]);
+
+  const handleStartExam = (exam) => {
+    sfx.playClick();
+    setSelectedExamId(exam.id);
+    setExamStarted(true);
+    setExamFinished(false);
+    setCurrentQIndex(0);
+    setUserAnswers({});
+    setFlaggedQuestions({});
+    setTimeLeftSeconds(exam.durationMinutes * 60);
+    setScoreResult(null);
+  };
+
+  const handleSelectOption = (optionIndex) => {
+    sfx.playClick();
+    setUserAnswers(prev => ({ ...prev, [currentQIndex]: optionIndex }));
+  };
+
+  const handleToggleFlag = (qIdx) => {
+    sfx.playClick();
+    setFlaggedQuestions(prev => ({ ...prev, [qIdx]: !prev[qIdx] }));
   };
 
   const formatTime = (secs) => {

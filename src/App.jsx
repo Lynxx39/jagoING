@@ -38,14 +38,30 @@ export default function App() {
   }, [userData]);
 
   useEffect(() => {
+    // Increment study time in 30-second intervals to prevent 1-second state thrashing & disk I/O
     const timer = setInterval(() => {
       setUserData(prev => ({
         ...prev,
-        studyTimeSeconds: (prev.studyTimeSeconds || 0) + 1
+        studyTimeSeconds: (prev.studyTimeSeconds || 0) + 30
       }));
-    }, 1000);
+    }, 30000);
     return () => clearInterval(timer);
   }, []);
+
+  const handleUnlockAchievement = (achId) => {
+    setUserData(prev => {
+      const achs = prev.achievements || [];
+      const target = achs.find(a => a.id === achId);
+      if (!target || target.unlocked) return prev;
+
+      const nextAchs = achs.map(a => a.id === achId ? { ...a, unlocked: true } : a);
+      return {
+        ...prev,
+        xp: prev.xp + (target.xpReward || 50),
+        achievements: nextAchs
+      };
+    });
+  };
 
   const handleEarnXP = (amount) => {
     setUserData(prev => {
@@ -58,9 +74,24 @@ export default function App() {
         setShowLevelUpModal(true);
       }
 
+      // Check automatic milestone achievements
+      const achs = prev.achievements || [];
+      const srsCount = Object.keys(prev.srsCards || {}).length;
+      const hasChampion = (prev.examHistory || []).some(e => e.score >= 80);
+
+      const updatedAchs = achs.map(a => {
+        if (a.unlocked) return a;
+        if (a.id === 'first_step') return { ...a, unlocked: true };
+        if (a.id === 'streak_3' && prev.streak >= 3) return { ...a, unlocked: true };
+        if (a.id === 'flashcard_master' && srsCount >= 10) return { ...a, unlocked: true };
+        if (a.id === 'exam_champion' && hasChampion) return { ...a, unlocked: true };
+        return a;
+      });
+
       return {
         ...prev,
-        xp: nextXP
+        xp: nextXP,
+        achievements: updatedAchs
       };
     });
   };
@@ -131,6 +162,7 @@ export default function App() {
                 userData={userData} 
                 onEarnXP={handleEarnXP} 
                 onCompleteQuest={handleCompleteQuest} 
+                onUnlockAchievement={handleUnlockAchievement}
               />
             )}
 
@@ -148,6 +180,7 @@ export default function App() {
                 userData={userData} 
                 onEarnXP={handleEarnXP} 
                 onCompleteQuest={handleCompleteQuest} 
+                onUnlockAchievement={handleUnlockAchievement}
               />
             )}
 
@@ -157,6 +190,7 @@ export default function App() {
                 setUserData={setUserData} 
                 onEarnXP={handleEarnXP} 
                 onCompleteQuest={handleCompleteQuest} 
+                onUnlockAchievement={handleUnlockAchievement}
               />
             )}
 
@@ -165,6 +199,7 @@ export default function App() {
                 userData={userData} 
                 onEarnXP={handleEarnXP} 
                 onCompleteQuest={handleCompleteQuest} 
+                onUnlockAchievement={handleUnlockAchievement}
               />
             )}
 

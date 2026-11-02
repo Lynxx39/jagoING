@@ -2,7 +2,6 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { 
   Flame, 
-  Sparkles, 
   Volume2, 
   VolumeX, 
   Award, 
@@ -23,7 +22,7 @@ import {
 import { sfx } from '../services/soundEffects';
 import { calculateRank } from '../services/storageService';
 
-export const TABS = [
+const TABS = [
   { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard, color: '#FFE600' },
   { id: 'grammar', name: 'Grammar Master', icon: BookOpen, color: '#A855F7' },
   { id: 'listening', name: 'Listening Lab', icon: Headphones, color: '#4EED89' },

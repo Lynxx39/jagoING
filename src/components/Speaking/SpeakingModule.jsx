@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Mic, MicOff, Volume2, CheckCircle, RotateCcw, Sparkles } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Mic, MicOff, Volume2 } from 'lucide-react';
 import { speechService } from '../../services/speechService';
 import { sfx } from '../../services/soundEffects';
 
@@ -46,7 +46,7 @@ const SPEAKING_DRILLS = [
   }
 ];
 
-export default function SpeakingModule({ userData, onEarnXP, onCompleteQuest }) {
+export default function SpeakingModule({ userData, onEarnXP, onCompleteQuest, onUnlockAchievement }) {
   const [selectedDrillId, setSelectedDrillId] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState('');
@@ -55,6 +55,13 @@ export default function SpeakingModule({ userData, onEarnXP, onCompleteQuest }) 
 
   const filteredDrills = SPEAKING_DRILLS.filter(d => d.level === userData.selectedLevel);
   const currentDrill = SPEAKING_DRILLS.find(d => d.id === selectedDrillId) || filteredDrills[0];
+
+  useEffect(() => {
+    return () => {
+      speechService.stop();
+      speechService.stopListening();
+    };
+  }, []);
 
   const handleListenModelAudio = () => {
     sfx.playClick();
@@ -118,6 +125,7 @@ export default function SpeakingModule({ userData, onEarnXP, onCompleteQuest }) 
       sfx.playCorrect();
       onEarnXP(30);
       onCompleteQuest('q_listening');
+      onUnlockAchievement?.('voice_speaker');
     } else {
       sfx.playIncorrect();
     }

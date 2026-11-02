@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { 
-  BookMarked, 
   Play, 
   Pause, 
   Volume2, 
-  Sparkles, 
+  Sparkles,
   Clock
 } from 'lucide-react';
 import { STORIES_DATA } from '../../data/storiesData';
@@ -21,6 +20,12 @@ export default function StoriesModule({ userData, onEarnXP, onCompleteQuest }) {
 
   const filteredStories = STORIES_DATA.filter(s => s.level === userData.selectedLevel);
   const currentStory = STORIES_DATA.find(s => s.id === selectedStoryId) || filteredStories[0];
+
+  useEffect(() => {
+    return () => {
+      speechService.stop();
+    };
+  }, [selectedStoryId]);
 
   const handleReadSentence = (idx) => {
     setActiveSentenceIndex(idx);
